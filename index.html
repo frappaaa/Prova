@@ -88,7 +88,7 @@
       // Aggiungi questa funzione per il geocoding
       async function getCoordinates(address) {
         try {
-          const query = encodeURIComponent(address + ", Milano, Italia");
+          const query = encodeURIComponent(address);
           const response = await fetch(
             `https://nominatim.openstreetmap.org/search?format=json&q=${query}`
           );
@@ -115,11 +115,16 @@
             range: RANGE,
           });
 
+          console.log(
+            "Dati ricevuti da Google Sheets:",
+            response.result.values
+          );
+
           const places = [];
 
-          // Processa ogni riga sequenzialmente per rispettare i limiti di rate del geocoding
           for (const row of response.result.values) {
-            const address = row[1]; // Assumendo che l'indirizzo sia nella seconda colonna
+            console.log("Elaborazione riga:", row);
+            const address = row[2]; // Assumendo che l'indirizzo sia nella seconda colonna
             const coordinates = await getCoordinates(address);
 
             if (coordinates) {
@@ -128,8 +133,8 @@
                 address: address,
                 lat: coordinates.lat,
                 lon: coordinates.lon,
-                info: row[2], // Aggiorna l'indice in base alla tua struttura
-                tags: row[3].split(",").map((tag) => tag.trim()), // Aggiorna l'indice in base alla tua struttura
+                info: row[8], // Aggiorna l'indice in base alla tua struttura
+                tags: (row[1] || "").split(",").map((tag) => tag.trim()),
               });
             }
 
@@ -137,6 +142,7 @@
             await new Promise((resolve) => setTimeout(resolve, 1000));
           }
 
+          console.log("Luoghi elaborati:", places);
           return places;
         } catch (error) {
           console.error("Errore nel caricamento dei dati:", error);
@@ -147,21 +153,26 @@
       // Inizializzazione dell'applicazione
       async function initApp() {
         try {
+          console.log("Inizializzazione dell'applicazione...");
           await initGoogleSheetsAPI();
+          console.log("API Google Sheets inizializzata");
 
-          // Inizializza la mappa
-          var map = L.map("map").setView([45.4642, 9.19], 12);
+          const map = L.map("map").setView([45.4642, 9.19], 12);
           L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
             attribution: "© OpenStreetMap contributors",
           }).addTo(map);
+          console.log("Mappa inizializzata");
 
-          // Carica i luoghi da Google Sheets
+          console.log("Caricamento luoghi...");
           places = await loadPlacesFromSheet();
+          console.log(`Caricati ${places.length} luoghi`);
 
-          // Renderizza i luoghi
           renderLocations("tutti");
         } catch (error) {
           console.error("Errore nell'inizializzazione:", error);
+          alert(
+            "Si è verificato un errore durante il caricamento dei dati. Riprova più tardi."
+          );
         }
       }
 
