@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mappa con Lista di Luoghi</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+      #map {
+        height: 400px;
+        width: 100%;
+      }
+      .location-card {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin: 10px 0;
+        cursor: pointer;
+        background-color: #f9f9f9;
+        transition: background-color 0.3s;
+      }
+      .location-card:hover {
+        background-color: #e0e0e0;
+      }
+      .tags {
+        margin-bottom: 10px;
+      }
+      .tag {
+        display: inline-block;
+        padding: 5px 10px;
+        margin: 5px;
+        border: 1px solid #007bff;
+        color: #007bff;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: all 0.3s;
+      }
+      .tag.active,
+      .tag:hover {
+        background-color: #007bff;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Mappa Interattiva</h2>
+    <div id="map"></div>
+
+    <h3>Filtra per servizio</h3>
+    <div class="tags">
+      <span class="tag" data-filter="tutti">Tutti</span>
+      <span class="tag" data-filter="gratuiti">Gratuiti</span>
+      <span class="tag" data-filter="rapidi">Test Rapidi</span>
+      <span class="tag" data-filter="specialistici">Specialistici</span>
+    </div>
+
+    <h3>Lista Luoghi</h3>
+    <div id="locations"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+      var map = L.map("map").setView([45.4642, 9.19], 12);
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "© OpenStreetMap contributors",
+      }).addTo(map);
+
+      var places = [
+        {
+          name: "Centro Test 1",
+          lat: 45.47,
+          lon: 9.185,
+          info: "Orari: 9:00-18:00, Servizi: Test IST gratuiti",
+          tags: ["gratuiti"],
+        },
+        {
+          name: "Clinica Salute 2",
+          lat: 45.46,
+          lon: 9.195,
+          info: "Orari: 8:00-20:00, Servizi: Consulenze e test rapidi",
+          tags: ["rapidi"],
+        },
+        {
+          name: "Ospedale Milano 3",
+          lat: 45.45,
+          lon: 9.18,
+          info: "Orari: 24h, Servizi: Urgenze e test specialistici",
+          tags: ["specialistici"],
+        },
+      ];
+
+      var locationList = document.getElementById("locations");
+      var markers = [];
+
+      function renderLocations(filter) {
+        locationList.innerHTML = "";
+        markers.forEach((marker) => map.removeLayer(marker));
+        markers = [];
+
+        places.forEach((place) => {
+          if (filter === "tutti" || place.tags.includes(filter)) {
+            var marker = L.marker([place.lat, place.lon])
+              .addTo(map)
+              .bindPopup(`<b>${place.name}</b><br>${place.info}`);
+            markers.push(marker);
+
+            var card = document.createElement("div");
+            card.className = "location-card";
+            card.innerHTML = `<strong>${place.name}</strong><br>${place.info}`;
+            card.onclick = function () {
+              map.setView([place.lat, place.lon], 14);
+              marker.openPopup();
+            };
+            locationList.appendChild(card);
+          }
+        });
+      }
+
+      document.querySelectorAll(".tag").forEach((tag) => {
+        tag.addEventListener("click", function () {
+          document
+            .querySelectorAll(".tag")
+            .forEach((t) => t.classList.remove("active"));
+          this.classList.add("active");
+          renderLocations(this.dataset.filter);
+        });
+      });
+
+      renderLocations("tutti");
+    </script>
+  </body>
+</html>
