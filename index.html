@@ -8,55 +8,89 @@
       rel="stylesheet"
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
+      body {
+        font-family: Arial, Helvetica, sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+
       #map {
         height: 400px;
         width: 100%;
       }
       .location-card {
-        border: 1px solid #ccc;
-        padding: 10px;
-        margin: 10px 0;
         cursor: pointer;
-        background-color: #f9f9f9;
+        background-color: #ffffff;
         transition: background-color 0.3s;
+        display: flex;
+        padding: 12px;
+        flex-direction: column;
+        align-items: flex-start;
+        align-self: stretch;
+        border-radius: 12px;
+        border: 1px solid #000;
+        margin: 24px 0;
       }
       .location-card:hover {
         background-color: #e0e0e0;
       }
       .tags {
         margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        overflow-x: auto; /* Abilita lo scorrimento orizzontale */
+        white-space: nowrap; /* Impedisce l'a capo del testo */
+        -webkit-overflow-scrolling: touch; /* Scorrimento fluido su iOS */
+        scrollbar-width: none; /* Nasconde la barra di scorrimento su Firefox */
+        -ms-overflow-style: none; /* Nasconde la barra di scorrimento su IE/Edge */
+        padding-bottom: 5px; /* Spazio per evitare che il contenuto venga tagliato */
       }
+
+      /* Nasconde la barra di scorrimento su Chrome/Safari */
+      .tags::-webkit-scrollbar {
+        display: none;
+      }
+
       .tag {
-        display: inline-block;
-        padding: 5px 10px;
-        margin: 5px;
-        border: 1px solid #007bff;
-        color: #007bff;
+        padding: 4px 10px;
         cursor: pointer;
-        border-radius: 5px;
         transition: all 0.3s;
+        justify-content: center;
+        align-items: center;
+        border-radius: 8px;
+        border: 1px solid #000;
+        white-space: nowrap; /* Impedisce l'a capo del testo */
+        flex-shrink: 0; /* Impedisce ai tag di restringersi */
       }
       .tag.active,
       .tag:hover {
-        background-color: #007bff;
+        background-color: #000000;
         color: white;
+      }
+
+      .drawer-lista {
+        background-color: #ffffff;
+        border-radius: 20px 20px 0 0;
+        box-shadow: 0px -9px 16.5px 0px rgba(0, 0, 0, 0.25);
+        padding: 34px 24px;
       }
     </style>
   </head>
   <body>
-    <h2>Mappa Interattiva</h2>
     <div id="map"></div>
 
-    <h3>Filtra per servizio</h3>
-    <div class="tags">
-      <span class="tag" data-filter="tutti">Tutti</span>
-      <span class="tag" data-filter="gratuiti">Gratuiti</span>
-      <span class="tag" data-filter="rapidi">Test Rapidi</span>
-      <span class="tag" data-filter="specialistici">Specialistici</span>
-    </div>
+    <div class="drawer-lista">
+      <div class="tags">
+        <span class="tag" data-filter="tutti">Tutti</span>
+        <span class="tag" data-filter="gratuiti">Gratuiti</span>
+        <span class="tag" data-filter="rapidi">Test Rapidi</span>
+        <span class="tag" data-filter="specialistici">Specialistici</span>
+      </div>
+      <hr />
 
-    <h3>Lista Luoghi</h3>
-    <div id="locations"></div>
+      <div id="locations"></div>
+    </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
