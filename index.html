@@ -92,25 +92,39 @@
       var locationList = document.getElementById("locations");
       var markers = [];
 
+      function createMarker(place) {
+        return L.marker([place.lat, place.lon])
+          .addTo(map)
+          .bindPopup(`<b>${place.name}</b><br>${place.info}`);
+      }
+
+      function createLocationCard(place, marker) {
+        var card = document.createElement("div");
+        card.className = "location-card";
+        card.innerHTML = `<strong>${place.name}</strong><br>${place.info}`;
+        card.onclick = function () {
+          map.setView([place.lat, place.lon], 14);
+          marker.openPopup();
+        };
+        return card;
+      }
+
       function renderLocations(filter) {
         locationList.innerHTML = "";
         markers.forEach((marker) => map.removeLayer(marker));
         markers = [];
 
         places.forEach((place) => {
+          if (!place.lat || !place.lon) {
+            console.error(`Coordinate mancanti per ${place.name}`);
+            return;
+          }
+
           if (filter === "tutti" || place.tags.includes(filter)) {
-            var marker = L.marker([place.lat, place.lon])
-              .addTo(map)
-              .bindPopup(`<b>${place.name}</b><br>${place.info}`);
+            const marker = createMarker(place);
             markers.push(marker);
 
-            var card = document.createElement("div");
-            card.className = "location-card";
-            card.innerHTML = `<strong>${place.name}</strong><br>${place.info}`;
-            card.onclick = function () {
-              map.setView([place.lat, place.lon], 14);
-              marker.openPopup();
-            };
+            const card = createLocationCard(place, marker);
             locationList.appendChild(card);
           }
         });
