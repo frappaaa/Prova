@@ -102,22 +102,19 @@
       var places = [
         {
           name: "Centro Test 1",
-          lat: 45.47,
-          lon: 9.185,
+          address: "Via Torino 20, Milano",
           info: "Orari: 9:00-18:00, Servizi: Test IST gratuiti",
           tags: ["gratuiti"],
         },
         {
           name: "Clinica Salute 2",
-          lat: 45.46,
-          lon: 9.195,
+          address: "Via Montenapoleone 10, Milano",
           info: "Orari: 8:00-20:00, Servizi: Consulenze e test rapidi",
           tags: ["rapidi"],
         },
         {
           name: "Ospedale Milano 3",
-          lat: 45.45,
-          lon: 9.18,
+          address: "Corso Buenos Aires 15, Milano",
           info: "Orari: 24h, Servizi: Urgenze e test specialistici",
           tags: ["specialistici"],
         },
@@ -126,28 +123,46 @@
       var locationList = document.getElementById("locations");
       var markers = [];
 
-      function renderLocations(filter) {
+      async function geocodeAddress(address) {
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+            address
+          )}`
+        );
+        const data = await response.json();
+        if (data.length > 0) {
+          return [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+        }
+        return null;
+      }
+
+      async function renderLocations(filter) {
         locationList.innerHTML = "";
         markers.forEach((marker) => map.removeLayer(marker));
         markers = [];
 
-        places.forEach((place) => {
+        for (const place of places) {
           if (filter === "tutti" || place.tags.includes(filter)) {
-            var marker = L.marker([place.lat, place.lon])
-              .addTo(map)
-              .bindPopup(`<b>${place.name}</b><br>${place.info}`);
-            markers.push(marker);
+            const coords = await geocodeAddress(place.address);
+            if (coords) {
+              var marker = L.marker(coords)
+                .addTo(map)
+                .bindPopup(
+                  `<b>${place.name}</b><br>${place.info}<br>${place.address}`
+                );
+              markers.push(marker);
 
-            var card = document.createElement("div");
-            card.className = "location-card";
-            card.innerHTML = `<strong>${place.name}</strong><br>${place.info}`;
-            card.onclick = function () {
-              map.setView([place.lat, place.lon], 14);
-              marker.openPopup();
-            };
-            locationList.appendChild(card);
+              var card = document.createElement("div");
+              card.className = "location-card";
+              card.innerHTML = `<strong>${place.name}</strong><br>${place.info}<br><small>${place.address}</small>`;
+              card.onclick = function () {
+                map.setView(coords, 14);
+                marker.openPopup();
+              };
+              locationList.appendChild(card);
+            }
           }
-        });
+        }
       }
 
       document.querySelectorAll(".tag").forEach((tag) => {
