@@ -223,9 +223,12 @@
         },
       ];
 
-      // Inizializzazione dell'applicazione
+      // Dichiara map come variabile globale
+      let map;
+
+      // Modifica la funzione initApp
       function initApp() {
-        const map = L.map("map").setView([45.4642, 9.19], 12);
+        map = L.map("map").setView([45.4642, 9.19], 12);
         L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
           attribution: "© OpenStreetMap contributors",
         }).addTo(map);
