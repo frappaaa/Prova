@@ -74,6 +74,39 @@
         border-radius: 24px 24px 0 0;
         box-shadow: 0px -9px 16.5px 0px rgba(0, 0, 0, 0.25);
         padding: 34px 24px;
+        margin-bottom: 60px;
+      }
+
+      .tab-bar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 60px;
+        background: white;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+      }
+
+      .tab-bar a {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 8px;
+        color: #666;
+        text-decoration: none;
+      }
+
+      .tab-bar a.active {
+        color: #000;
+      }
+
+      .tab-bar img {
+        width: 24px;
+        height: 24px;
       }
     </style>
   </head>
@@ -90,6 +123,18 @@
       <hr />
 
       <div id="locations"></div>
+    </div>
+
+    <div class="tab-bar">
+      <a href="#" class="active">
+        <img src="assets/map.svg" alt="Map" />
+      </a>
+      <a href="#">
+        <img src="assets/plus.svg" alt="Add" />
+      </a>
+      <a href="#">
+        <img src="assets/calendar.svg" alt="Calendar" />
+      </a>
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
