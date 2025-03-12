@@ -82,29 +82,31 @@
         bottom: 0;
         left: 0;
         right: 0;
-        height: 60px;
         background: white;
         display: flex;
+        padding: 20px 0;
         justify-content: space-around;
         align-items: center;
         box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-        z-index: 1000;
       }
-
-      .tab-bar a {
+      .tab-item {
         display: flex;
         flex-direction: column;
         align-items: center;
         padding: 8px;
-        color: #666;
-        text-decoration: none;
+        cursor: pointer;
       }
 
-      .tab-bar a.active {
-        color: #000;
+      .tab-item:nth-child(2) {
+        border-radius: 50px;
+        background: #374957;
+        display: flex;
+        padding: 10px 22px;
+        align-items: center;
+        gap: 10px;
       }
 
-      .tab-bar img {
+      .tab-item img {
         width: 24px;
         height: 24px;
       }
@@ -126,15 +128,15 @@
     </div>
 
     <div class="tab-bar">
-      <a href="#" class="active">
-        <img src="assets/map.svg" alt="Map" />
-      </a>
-      <a href="#">
-        <img src="assets/plus.svg" alt="Add" />
-      </a>
-      <a href="#">
-        <img src="assets/calendar.svg" alt="Calendar" />
-      </a>
+      <div class="tab-item">
+        <img src="assets/fi-rr-map-marker.svg" alt="Map" />
+      </div>
+      <div class="tab-item">
+        <img src="assets/fi-rr-plus.svg" alt="Add" />
+      </div>
+      <div class="tab-item">
+        <img src="assets/fi-rr-calendar.svg" alt="Calendar" />
+      </div>
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
