@@ -8,24 +8,34 @@
     <link rel="stylesheet" href="/style/styles.css" />
   </head>
   <body>
-    <div id="map"></div>
-    <ul id="locations"></ul>
-    <button id="loadMore" style="display: none">Carica altri luoghi</button>
-    <div class="tab-bar">
-      <div class="tab-item">
-        <a href="index.html">
-          <img src="assets/fi-rr-map-marker.svg" alt="Map" />
-        </a>
+    <div class="app-container">
+      <div class="content-wrapper">
+        <div class="list-container">
+          <ul id="locations"></ul>
+          <button id="loadMore" class="load-more-btn">
+            Carica altri luoghi
+          </button>
+        </div>
+        <div class="map-container">
+          <div id="map"></div>
+        </div>
       </div>
-      <div class="tab-item">
-        <a href="add-event.html">
-          <img src="assets/fi-rr-plus.svg" alt="Add" />
-        </a>
-      </div>
-      <div class="tab-item">
-        <a href="calendar.html">
-          <img src="assets/fi-rr-calendar.svg" alt="Calendar" />
-        </a>
+      <div class="tab-bar">
+        <div class="tab-item active">
+          <a href="index.html">
+            <img src="assets/fi-rr-map-marker.svg" alt="Map" />
+          </a>
+        </div>
+        <div class="tab-item">
+          <a href="add-event.html">
+            <img src="assets/fi-rr-plus.svg" alt="Add" />
+          </a>
+        </div>
+        <div class="tab-item">
+          <a href="calendar.html">
+            <img src="assets/fi-rr-calendar.svg" alt="Calendar" />
+          </a>
+        </div>
       </div>
     </div>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
