@@ -9,6 +9,7 @@
       body {
         margin: 0;
         padding: 0;
+        font-family: Arial, Helvetica, sans-serif;
       }
       #map {
         height: 50vh;
@@ -27,9 +28,29 @@
         padding: 12px;
         margin-bottom: 10px;
       }
-      #loadMore {
-        margin: 20px;
+
+      #locations li h3 {
+        margin: 0 0 8px 0;
+        color: #374957;
       }
+
+      #locations li p {
+        margin: 4px 0;
+      }
+
+      #locations li .category {
+        color: #666;
+      }
+
+      #locations li .address {
+        color: #444;
+      }
+
+      #locations li .info {
+        color: #555;
+        margin-top: 8px;
+      }
+
       .tab-bar {
         position: fixed;
         bottom: 0;
@@ -37,11 +58,11 @@
         right: 0;
         background: white;
         display: flex;
-        padding: 20px 0;
         justify-content: space-around;
         align-items: center;
         box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
         z-index: 1000;
+        padding: 20px 0;
       }
       .tab-item {
         display: flex;
@@ -68,7 +89,6 @@
     <div id="map"></div>
     <ul id="locations"></ul>
     <button id="loadMore" style="display: none">Carica altri luoghi</button>
-
     <div class="tab-bar">
       <div class="tab-item">
         <a href="index.html">
@@ -86,22 +106,38 @@
         </a>
       </div>
     </div>
-
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
       const sheetId = "1gnIaoATtJAdtGC1ynplBo4o6TzAbF8Q47qpHzpGkB1U";
-      const sheetRange = "A2:C"; // Modifica secondo il tuo foglio
+      const sheetRange = "A2:I"; // Modificato per includere fino alla colonna I
       const apiKey = "AIzaSyDgMbIXrmolCkByiYrzHBYWQu-rLJCPPhs"; // Inserisci la tua API Key di Google
       const sheetUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${sheetRange}?key=${apiKey}`;
       const geocodeUrl = "https://maps.googleapis.com/maps/api/geocode/json";
-      const columnNameIndex = 0; // Indice della colonna contenente il nome del luogo
-      const columnAddressIndex = 2; // Indice della colonna contenente l'indirizzo
-      const columnInfoIndex = 3; // Indice della colonna contenente informazioni aggiuntive
+      const columnNameIndex = 0;
+      const columnCategoryIndex = 1; // Indice della categoria
+      const columnAddressIndex = 2;
+      const columnInfoIndex = 8; // Indice delle info (colonna I)
 
-      const map = L.map("map").setView([45.4642, 9.19], 12); // Milano come centro
+      const map = L.map("map");
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: "&copy; OpenStreetMap contributors",
       }).addTo(map);
+
+      // Richiedi la posizione del dispositivo
+      if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            map.setView([latitude, longitude], 12);
+          },
+          (error) => {
+            console.error("Errore geolocalizzazione:", error);
+            map.setView([45.4642, 9.19], 12); // Fallback su Milano
+          }
+        );
+      } else {
+        map.setView([45.4642, 9.19], 12); // Fallback su Milano
+      }
 
       async function geocodeAddress(address) {
         try {
@@ -140,7 +176,6 @@
       const batchSize = 5; // Numero di luoghi da caricare per volta
       let allLocations = [];
 
-      // Modifica la funzione loadLocations
       async function loadLocations() {
         try {
           const response = await fetch(sheetUrl);
@@ -201,17 +236,33 @@
         for (let i = currentIndex; i < endIndex; i++) {
           const row = allLocations[i];
           const name = row[columnNameIndex];
+          const category = row[columnCategoryIndex];
           const address = row[columnAddressIndex];
+          const info = row[columnInfoIndex] || "";
 
           if (name && address) {
             const location = await geocodeAddress(address);
             if (location) {
-              L.marker([location.lat, location.lng])
-                .addTo(map)
-                .bindPopup(`<b>${name}</b><br>${address}`);
+              // Aggiunge il marker sulla mappa
+              L.marker([location.lat, location.lng]).addTo(map).bindPopup(`
+                  <h3>${name}</h3>
+                  <p><strong>Categoria:</strong> ${category}</p>
+                  <p><strong>Indirizzo:</strong> ${address}</p>
+                  ${info ? `<p><strong>Info:</strong> ${info}</p>` : ""}
+                `);
 
+              // Crea l'elemento della lista
               const listItem = document.createElement("li");
-              listItem.textContent = `${name} - ${address}`;
+              listItem.innerHTML = `
+                <h3>${name}</h3>
+                <p class="category"><strong>Categoria:</strong> ${category}</p>
+                <p class="address"><strong>Indirizzo:</strong> ${address}</p>
+                ${
+                  info
+                    ? `<p class="info"><strong>Info:</strong> ${info}</p>`
+                    : ""
+                }
+              `;
               locationsList.appendChild(listItem);
             }
           }
