@@ -6,6 +6,10 @@
     <title>Mappa con Google Sheet</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
       #map {
         height: 50vh;
         width: 100%;
@@ -59,13 +63,19 @@
 
     <div class="tab-bar">
       <div class="tab-item">
-        <img src="assets/fi-rr-map-marker.svg" alt="Map" />
+        <a href="index.html">
+          <img src="assets/fi-rr-map-marker.svg" alt="Map" />
+        </a>
       </div>
       <div class="tab-item">
-        <img src="assets/fi-rr-plus.svg" alt="Add" />
+        <a href="add-event.html">
+          <img src="assets/fi-rr-plus.svg" alt="Add" />
+        </a>
       </div>
       <div class="tab-item">
-        <img src="assets/fi-rr-calendar.svg" alt="Calendar" />
+        <a href="calendar.html">
+          <img src="assets/fi-rr-calendar.svg" alt="Calendar" />
+        </a>
       </div>
     </div>
 

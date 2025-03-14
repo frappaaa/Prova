@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calendario Eventi</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 20px;
+        padding-bottom: 100px;
+      }
+      .calendar {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+      .calendar-header {
+        display: grid;
+        grid-template-columns: auto repeat(7, 1fr) auto;
+        text-align: center;
+        font-weight: bold;
+        margin-bottom: 10px;
+        align-items: center;
+      }
+      .nav-button {
+        background: none;
+        border: none;
+        font-size: 20px;
+        cursor: pointer;
+        padding: 0 10px;
+      }
+      .month-display {
+        font-size: 1.5em;
+        font-weight: bold;
+        margin-bottom: 15px;
+        text-align: left;
+      }
+      .calendar-days {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 5px;
+      }
+      .day {
+        padding: 10px;
+        text-align: center;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+      .events-list {
+        margin-top: 20px;
+      }
+      .event-item {
+        background: #f5f5f5;
+        padding: 15px;
+        margin-bottom: 10px;
+        border-radius: 4px;
+      }
+      .tab-bar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: white;
+        display: flex;
+        padding: 20px 0;
+        justify-content: space-around;
+        align-items: center;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+      }
+      .tab-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 8px;
+        cursor: pointer;
+      }
+      .tab-item:nth-child(2) {
+        border-radius: 50px;
+        background: #374957;
+        padding: 10px 22px;
+      }
+      .tab-item img {
+        width: 24px;
+        height: 24px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="month-display" id="monthDisplay"></div>
+    <div class="calendar">
+      <div class="calendar-header">
+        <button class="nav-button" onclick="navigateWeek(-1)">←</button>
+        <div>Lun</div>
+        <div>Mar</div>
+        <div>Mer</div>
+        <div>Gio</div>
+        <div>Ven</div>
+        <div>Sab</div>
+        <div>Dom</div>
+        <button class="nav-button" onclick="navigateWeek(1)">→</button>
+      </div>
+      <div class="calendar-days" id="calendarDays"></div>
+    </div>
+
+    <div class="events-list" id="eventsList">
+      <!-- Gli eventi verranno inseriti qui dinamicamente -->
+    </div>
+
+    <div class="tab-bar">
+      <div class="tab-item">
+        <a href="index.html">
+          <img src="assets/fi-rr-map-marker.svg" alt="Map" />
+        </a>
+      </div>
+      <div class="tab-item">
+        <a href="add-event.html">
+          <img src="assets/fi-rr-plus.svg" alt="Add" />
+        </a>
+      </div>
+      <div class="tab-item">
+        <a href="calendar.html">
+          <img src="assets/fi-rr-calendar.svg" alt="Calendar" />
+        </a>
+      </div>
+    </div>
+
+    <script>
+      let currentDate = new Date();
+
+      function getWeekDates(date) {
+        const current = new Date(date);
+        const first = current.getDate() - current.getDay() + 1;
+        const week = [];
+
+        for (let i = 0; i < 7; i++) {
+          const day = new Date(current.setDate(first + i));
+          week.push(new Date(day));
+        }
+        return week;
+      }
+
+      function updateMonthDisplay() {
+        const months = [
+          "Gennaio",
+          "Febbraio",
+          "Marzo",
+          "Aprile",
+          "Maggio",
+          "Giugno",
+          "Luglio",
+          "Agosto",
+          "Settembre",
+          "Ottobre",
+          "Novembre",
+          "Dicembre",
+        ];
+        document.getElementById("monthDisplay").textContent =
+          months[currentDate.getMonth()] + " " + currentDate.getFullYear();
+      }
+
+      function generateCalendar() {
+        const calendarDays = document.getElementById("calendarDays");
+        calendarDays.innerHTML = "";
+        const weekDates = getWeekDates(currentDate);
+
+        weekDates.forEach((date) => {
+          const day = document.createElement("div");
+          day.className = "day";
+          day.textContent = date.getDate();
+          if (date.toDateString() === new Date().toDateString()) {
+            day.style.backgroundColor = "#e0e0e0";
+          }
+          calendarDays.appendChild(day);
+        });
+
+        updateMonthDisplay();
+      }
+
+      function navigateWeek(direction) {
+        currentDate.setDate(currentDate.getDate() + direction * 7);
+        generateCalendar();
+      }
+
+      generateCalendar();
+    </script>
+  </body>
+</html>
